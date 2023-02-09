@@ -11,23 +11,30 @@ dy = [0, 1, -1, 0] # boundaries of y values
 
 class Grid:
     def print_grid(self):
-        print(' ', end='-')
+        print(Back.WHITE + ' ', end=' ')
         for col in range(self.size):
-            print('-', end='')
-        print()
+            print(Back.WHITE + ' ', end='')
+        print(Back.WHITE + ' ', end=' ')
+        print(Back.BLACK + '')
         for row in range(self.size - 1, -1, -1):
-            print('|', end=" ")
+            print(Back.WHITE + ' ', end=" ")
             for col in range(self.size):
-                if self.map[row][col] == START or self.map[row][col] == TARGET:
+                if self.map[row][col] == START:
+                    print(Back.YELLOW + self.map[row][col], end="")
+                elif self.map[row][col] == TARGET:
                     print(Back.GREEN + self.map[row][col], end="")
+                elif self.map[row][col] == BLOCKED:
+                    print(Back.RED + " ", end="")
                 else:
                     print(Back.BLACK + self.map[row][col], end="")
-            print('|')
-        print(' ', end='-')
+            print(Back.WHITE + ' ', end=' ')
+            print(Back.BLACK + '')
+        print(Back.WHITE + ' ', end=' ')
         for col in range(self.size):
-            print('-', end='')
-        print()
-        print()
+            print(Back.WHITE + ' ', end='')
+        print(Back.WHITE + ' ', end=' ')
+        print(Back.BLACK + '')
+        print(Back.BLACK + '')
 
     def __init__(self, size):
         self.size = size
