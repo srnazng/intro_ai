@@ -6,8 +6,9 @@ def search():
 def h():
     return
 
-def manhattan():
-    return
+# a and b are tuples (x,y)
+def manhattan(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 def forward():
     # search A to T
