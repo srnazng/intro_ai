@@ -24,10 +24,18 @@ class Run:
 
     def a_star(self):
         path = self.repeated_forward()
-        print("Final Map")
-        self.print_nodes()
-        print("PATH")
-        print(path)
+        if path is None:
+            print("I cannot reach the target")
+        else:
+            for node in path[0:-1]:
+                if node is not self.start:
+                    self.gridworld.map[node.x][node.y] = '.'
+            self.gridworld.print_grid()
+
+            print("PATH")
+            for node in path:
+                self.gridworld.map[node.x][node.y] = '.'
+                print('(' + str(node.x) + ', ' + str(node.y) + ')', end=' ')
 
     def print_nodes(self):
         for r in self.node_grid:
@@ -73,17 +81,17 @@ class Run:
             if path is None:
                 return None 
 
-            # update counter
-            counter += 1
-
             # for each node in path 
-            for i in range(len(path) - 2):    
+            for i in range(len(path) - 1):    
+                # print(f"Current start: {current_start.x}, {current_start.y}")
                 # expand current start
-                for i in range(4):
-                    x = current_start.x + dx[i]
-                    y = current_start.y + dy[i]
+                for j in range(4):
+                    x = current_start.x + dx[j]
+                    y = current_start.y + dy[j]
 
-                    if x < 0 or y < 0 or x >= self.size or y >= self.size or self.gridworld[x][y] == '#':
+                    if x < 0 or y < 0 or x >= self.size or y >= self.size:
+                        continue
+                    if self.gridworld.map[x][y] == '#':
                         # if blocked update map
                         self.node_grid[x][y].blocked = True
 
@@ -94,12 +102,13 @@ class Run:
                     final_path.append(path[i + 1])
                     current_start = path[i + 1]
 
+            # update counter
+            counter += 1
+
         return final_path
             
     # Single instance of A* on current map
     def forward(self, current_start, counter):
-        print("A*", counter)
-        self.print_nodes()
         # Search A to T
         flag = False # If G has been found
 
@@ -116,11 +125,13 @@ class Run:
         open_list.insert(current_start)
         
         # find shortest path
-        while self.target.g > (open_list.returnMin().g + open_list.returnMin().h):
+        while open_list.size > 0 and self.target.g >= (open_list.returnMin().g + open_list.returnMin().h):
             # get node with smallest f, this node gets EXPANDED.
             min_node = open_list.returnMin()
             open_list.remove()
 
+            # print(f"Popping: {min_node.x}, {min_node.y}. Target: {self.target.x}, {self.target.y}")
+            
             # target found
             if min_node == self.target:
                 flag = True
@@ -152,7 +163,6 @@ class Run:
                     open_list.insert(adj_node)
 
         # no path to the goal was found, so return with nothing
-        print(f"flag: {flag}")
         if not flag:
             return None
 
@@ -177,4 +187,4 @@ class Run:
             return node.g + node.h
         return -1
 
-Run(3)
+Run(50)

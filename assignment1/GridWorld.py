@@ -4,6 +4,7 @@ from colorama import Fore, Back, Style
 
 BLOCKED = '#'
 UNBLOCKED = ' '
+PATH = '.'
 START = 'A'
 TARGET = 'T'
 dx = [-1, 0, 0, 1] # boundaries of x values
@@ -20,11 +21,13 @@ class GridWorld:
             print(Back.WHITE + ' ', end=" ")
             for col in range(self.size):
                 if self.map[row][col] == START:
-                    print(Back.YELLOW + self.map[row][col], end="")
+                    print(Back.GREEN + self.map[row][col], end="")
                 elif self.map[row][col] == TARGET:
                     print(Back.GREEN + self.map[row][col], end="")
                 elif self.map[row][col] == BLOCKED:
                     print(Back.RED + " ", end="")
+                elif self.map[row][col] == PATH:
+                    print(Back.GREEN + " ", end="")
                 else:
                     print(Back.BLACK + self.map[row][col], end="")
             print(Back.WHITE + ' ', end=' ')
