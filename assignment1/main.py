@@ -36,6 +36,7 @@ class Run:
             for node in path:
                 self.gridworld.map[node.x][node.y] = '.'
                 print('(' + str(node.x) + ', ' + str(node.y) + ')', end=' ')
+        print()
 
     def print_nodes(self):
         for r in self.node_grid:
@@ -52,9 +53,6 @@ class Run:
 
     def compare(self, n1, n2):
         return self.f(n1) - self.f(n2)
-
-    def search(self):
-        return
 
     def h(self, node):
         return self.manhattan(node, self.target)
@@ -125,17 +123,12 @@ class Run:
         open_list.insert(current_start)
         
         # find shortest path
-        while open_list.size > 0 and self.target.g >= (open_list.returnMin().g + open_list.returnMin().h):
+        while open_list.size > 0 and self.target.g > (open_list.returnMin().g + open_list.returnMin().h):
             # get node with smallest f, this node gets EXPANDED.
             min_node = open_list.returnMin()
             open_list.remove()
 
             # print(f"Popping: {min_node.x}, {min_node.y}. Target: {self.target.x}, {self.target.y}")
-            
-            # target found
-            if min_node == self.target:
-                flag = True
-                break
             
             # FIND SHORTEST PATH USING CURRENT KNOWLEDGE
             # Loop through all the neighbors of the node. 
@@ -162,8 +155,8 @@ class Run:
                     adj_node.parent = min_node
                     open_list.insert(adj_node)
 
-        # no path to the goal was found, so return with nothing
-        if not flag:
+        # no path to the goal was found if open list is exhausted, so return with nothing
+        if open_list.size == 0:
             return None
 
         # trace backwards from target to start
@@ -187,4 +180,4 @@ class Run:
             return node.g + node.h
         return -1
 
-Run(50)
+Run(101)

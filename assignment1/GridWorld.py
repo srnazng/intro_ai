@@ -52,6 +52,13 @@ class GridWorld:
         self.map[self.start[0]][self.start[1]] = START
         self.map[self.target[0]][self.target[1]] = TARGET
 
+        blocked_count = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                blocked_count += (self.map[i][j] == '#')
+
+        print(f"Fraction blocked: {blocked_count / (self.size * self.size)}")
+
     def generate_grid(self):
         visited = [[False]*self.size for _ in range(self.size)]
         stack = []
@@ -69,18 +76,19 @@ class GridWorld:
                 continue
             visited[coord[0]][coord[1]] = True
 
-            unvisited_neighbors = []
+            neighbors = []
             for i in range(4):
                 new_coord = (coord[0] + dx[i], coord[1] + dy[i])
                 if new_coord[0] >= 0 and new_coord[0] < self.size and new_coord[1] >= 0 and new_coord[1] < self.size:
-                    if not visited[new_coord[0]][new_coord[1]]:
-                        unvisited_neighbors.append(new_coord)
+                    neighbors.append(new_coord)
 
-            rand.shuffle(unvisited_neighbors)
-            for neighbor in unvisited_neighbors:
-                if (rand.random() < 0.7):
-                    stack.append(neighbor)
-                else:
-                    self.map[neighbor[0]][neighbor[1]] = BLOCKED
+            rand.shuffle(neighbors)
+            for neighbor in neighbors:
+                if not visited[neighbor[0]][neighbor[1]]:
+                    if (rand.random() < 0.7):
+                        stack.append(neighbor)
+                    else:
+                        self.map[neighbor[0]][neighbor[1]] = BLOCKED
+                        visited[neighbor[0]][neighbor[1]] = True
 
 init()
