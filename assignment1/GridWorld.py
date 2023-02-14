@@ -9,14 +9,14 @@ TARGET = 'T'
 dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
 
-class Grid:
+class GridWorld:
     def print_grid(self):
         print(Back.WHITE + ' ', end=' ')
         for col in range(self.size):
             print(Back.WHITE + ' ', end='')
         print(Back.WHITE + ' ', end=' ')
-        print(Back.BLACK + '')
-        for row in range(self.size - 1, -1, -1):
+        print(Style.RESET_ALL)
+        for row in range(self.size):
             print(Back.WHITE + ' ', end=" ")
             for col in range(self.size):
                 if self.map[row][col] == START:
@@ -28,14 +28,13 @@ class Grid:
                 else:
                     print(Back.BLACK + self.map[row][col], end="")
             print(Back.WHITE + ' ', end=' ')
-            print(Back.BLACK + '')
+            print(Style.RESET_ALL)
         print(Back.WHITE + ' ', end=' ')
         for col in range(self.size):
             print(Back.WHITE + ' ', end='')
         print(Back.WHITE + ' ', end=' ')
-        print(Back.BLACK + '')
-        print(Back.BLACK + '')
-
+        print(Style.RESET_ALL)
+        print()
 
     def __init__(self, size):
         self.size = size
