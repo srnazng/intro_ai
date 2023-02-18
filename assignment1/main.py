@@ -7,7 +7,9 @@ dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
 
 class Run:
-    def __init__(self, size, forward):
+    def __init__(self, size, forward=True, adaptive=False):
+        self.adaptive = adaptive
+        self.forward = forward
         self.size = size
         self.gridworld = GridWorld(size)
         self.gridworld.print_grid()
@@ -20,10 +22,10 @@ class Run:
             for node in row:
                 node.h = self.h(node)
 
-        self.a_star(forward)
+        self.a_star()
 
-    def a_star(self, forward):
-        path = self.repeated_a_star(forward)
+    def a_star(self):
+        path = self.repeated_a_star(self.forward)
         if path is None:
             print("I cannot reach the target")
         else:
@@ -60,10 +62,15 @@ class Run:
         return (self.size**2*self.f(n1) - n1.g)-(self.size**2*self.f(n2)-n2.g)
 
     def h(self, node):
+        if self.adaptive:
+            return self.adaptive_h(node)
         return self.manhattan(node, self.target)
 
     def manhattan(self, a, b):
         return abs(a.x - b.x) + abs(a.y - b.y)
+
+    def adaptive_h(self, node):
+        return self.target.g - node.g
 
     def repeated_a_star(self, forward):
         final_path = []
@@ -246,4 +253,4 @@ class Run:
             return node.g + node.h
         return -1
 
-Run(101, False)
+Run(101, False, True)
