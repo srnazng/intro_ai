@@ -57,7 +57,7 @@ class GridWorld:
             for j in range(self.size):
                 blocked_count += (self.map[i][j] == '#')
 
-        print(f"Fraction blocked: {blocked_count / (self.size * self.size)}")
+        # print(f"Fraction blocked: {blocked_count / (self.size * self.size)}")
 
     def generate_grid(self):
         visited = [[False]*self.size for _ in range(self.size)]

@@ -2,20 +2,28 @@ from GridWorld import GridWorld
 from Heap import MinHeap
 from Node import Node
 import sys
+import time
 
 dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
 
 class Run:
-    def __init__(self, size, forward=True, adaptive=False):
+    def __init__(self, size, forward=True, adaptive=False, favor_larger_g=True, print=True):
         self.adaptive = adaptive
-        self.forward = forward
+        self.is_forward = forward
         self.size = size
         self.gridworld = GridWorld(size)
-        self.gridworld.print_grid()
+        self.print = print
+        if print:
+            self.gridworld.print_grid()
         self.node_grid = [[Node(i, j) for j in range(size)] for i in range(size)] # 2d Array of Nodes with currently known values
         self.start = self.node_grid[self.gridworld.start[0]][self.gridworld.start[1]]
         self.target = self.node_grid[self.gridworld.target[0]][self.gridworld.target[1]]
+
+        if favor_larger_g:
+            self.compare = self.compare_favor_larger_g
+        else:
+            self.compare = self.compare_favor_smaller_g
 
         # initialize h values for each node
         for row in self.node_grid:
@@ -25,20 +33,21 @@ class Run:
         self.a_star()
 
     def a_star(self):
-        path = self.repeated_a_star(self.forward)
-        if path is None:
-            print("I cannot reach the target")
-        else:
-            for node in path[0:-1]:
-                if node is not self.start:
-                    self.gridworld.map[node.x][node.y] = '.'
-            self.gridworld.print_grid()
+        path = self.repeated_a_star()
+        if self.print:
+            if path is None:
+                print("I cannot reach the target")
+            else:
+                for node in path[0:-1]:
+                    if node is not self.start:
+                        self.gridworld.map[node.x][node.y] = '.'
+                self.gridworld.print_grid()
 
-            print("PATH")
-            for node in path:
-                self.gridworld.map[node.x][node.y] = '.'
-                print('(' + str(node.x) + ', ' + str(node.y) + ')', end=' ')
-        print()
+                print("PATH")
+                for node in path:
+                    self.gridworld.map[node.x][node.y] = '.'
+                    print('(' + str(node.x) + ',' + str(node.y) + ')', end=' ')
+            print()
 
     def print_nodes(self):
         for r in self.node_grid:
@@ -53,13 +62,13 @@ class Run:
                     print('_ |', end = ' ')
             print()
 
-    def compare(self, n1, n2):
+    def compare_favor_larger_g(self, n1, n2):
         #in favor of larger g values
-        return (self.size**2*self.f(n1) - n1.g)-(self.size**2*self.f(n2)-n2.g)
+        return (self.size**2 * self.f(n1) - n1.g) - (self.size**2*self.f(n2) - n2.g)
 
-    def compare_smaller(self, n1, n2):
+    def compare_favor_smaller_g(self, n1, n2):
         #in favor of smaller g values
-        return (self.size**2*self.f(n1) - n1.g)-(self.size**2*self.f(n2)-n2.g)
+        return (self.size**2 * self.f(n1) - n1.g) - (self.size**2*self.f(n2) - n2.g)
 
     def h(self, node):
         if self.adaptive:
@@ -72,7 +81,7 @@ class Run:
     def adaptive_h(self, node):
         return self.target.g - node.g
 
-    def repeated_a_star(self, forward):
+    def repeated_a_star(self):
         final_path = []
         
         counter = 0
@@ -85,7 +94,7 @@ class Run:
                 return final_path
             
             # run A* on current map
-            if forward:
+            if self.is_forward:
                 path = self.forward(current_start, counter)
             else:
                 path = self.backward(current_start, counter)
@@ -253,4 +262,55 @@ class Run:
             return node.g + node.h
         return -1
 
-Run(101, False, True)
+NUM_TRIALS = 10
+MAP_WIDTH = 50 # default 101
+
+# DEFAULT
+Run(MAP_WIDTH, print=False)
+
+# TEST REPEATED FORWARD A*
+
+total_time_1 = 0.0
+for i in range(NUM_TRIALS):
+    start = time.time()
+    Run(MAP_WIDTH, True, False, True, False) # forward=True, adaptive=False, favor_larger_g=True, print=False
+    end = time.time()
+    total_time_1 = total_time_1 + (end - start)
+avg_time_1 = total_time_1 / NUM_TRIALS
+
+# TEST REPEATED BACKWARD A*
+total_time_2 = 0.0
+for i in range(NUM_TRIALS):
+    start = time.time()
+    Run(MAP_WIDTH, False, False, True, False) # forward=False, adaptive=False, favor_larger_g=True, print=False
+    end = time.time()
+    total_time_2 = total_time_2 + (end - start)
+avg_time_2 = total_time_2 / NUM_TRIALS
+
+# TEST ADAPTIVE A*
+total_time_3 = 0.0
+for i in range(NUM_TRIALS):
+    start = time.time()
+    Run(MAP_WIDTH, True, True, True, False) # forward=True, adaptive=True, favor_larger_g=True, print=False
+    end = time.time()
+    total_time_3 = total_time_3 + (end - start)
+avg_time_3 = total_time_3 / NUM_TRIALS
+
+# TEST REPEATED FORWARD A* WITH TIE BREAKING FAVORING SMALLER G
+total_time_4 = 0.0
+for i in range(NUM_TRIALS):
+    start = time.time()
+    Run(MAP_WIDTH, True, False, False, False) # forward=True, adaptive=True, favor_larger_g=False, print=False
+    end = time.time()
+    total_time_4 = total_time_4 + (end - start)
+avg_time_4 = total_time_4 / NUM_TRIALS
+
+# PRINT RESULTS
+print("TEST REPEATED FORWARD A*:")
+print(" Average Runtime:", avg_time_1)
+print("TEST REPEATED BACKWARD A*:")
+print(" Average Runtime:", avg_time_2)
+print("TEST ADAPTIVE REPEATED FORWARD A*:")
+print(" Average Runtime:", avg_time_3)
+print("TEST REPEATED FORWARD A* FAVORING SMALLER G:")
+print(" Average Runtime:", avg_time_4)
