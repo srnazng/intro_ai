@@ -132,9 +132,6 @@ class Run:
 
             # update counter
             counter += 1
-        
-        if self.adaptive:
-            self.calculate_h()
 
         return final_path
 
@@ -274,6 +271,9 @@ class Run:
             path.append(curr_node)
             curr_node = curr_node.parent
         path.append(current_start)
+
+        if self.adaptive:
+            self.calculate_h()
             
         return path[::-1]
 
