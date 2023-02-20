@@ -3,7 +3,6 @@ from Heap import MinHeap
 from Node import Node
 import sys
 import time
-import copy
 
 dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
@@ -67,9 +66,10 @@ class Run:
                     print('_ |', end = ' ')
             print()
 
+    # n1 and n2 in format (h, Node)
     def compare_favor_larger_g(self, n1, n2):
         #in favor of larger g values
-        return (self.size**2 * self.f(n1) - n1.g) - (self.size**2*self.f(n2) - n2.g)
+        return (self.size**2 * n1[0] - n1[1].g) - (self.size**2 * n2[0] - n2[1].g)
 
     def compare_favor_smaller_g(self, n1, n2):
         #in favor of smaller g values
@@ -150,12 +150,12 @@ class Run:
         current_start.search = counter
         
         # Insert starting node of A* as the first node
-        open_list.insert(self.target)
+        open_list.insert((self.f(self.target), self.target))
         
         # find shortest path
-        while open_list.size > 0 and current_start.g > (open_list.returnMin().g + open_list.returnMin().h):
+        while open_list.size > 0 and current_start.g > (open_list.returnMin()[1].g + open_list.returnMin()[1].h):
             # get node with smallest f, this node gets EXPANDED.
-            min_node = open_list.returnMin()
+            min_node = open_list.returnMin()[1]
             open_list.remove()
             if (min_node.g > self.node_grid[min_node.x][min_node.y].g):
                 continue
@@ -187,7 +187,7 @@ class Run:
                 if min_node.g + 1 < adj_node.g:
                     adj_node.g = min_node.g + 1
                     adj_node.parent = self.node_grid[min_node.x][min_node.y]
-                    open_list.insert(copy.deepcopy(adj_node))
+                    open_list.insert((self.f(adj_node), adj_node))
 
         # no path to the goal was found if open list is exhausted, so return with nothing
         if open_list.size == 0:
@@ -200,9 +200,6 @@ class Run:
             path.append(curr_node)
             curr_node = curr_node.parent
         path.append(self.target)
-
-        if self.adaptive:
-            self.calculate_h()
     
         return path
             
@@ -221,15 +218,22 @@ class Run:
         current_start.search = counter
         
         # Insert starting node of A* as the first node
-        open_list.insert(current_start)
+        open_list.insert((self.f(current_start), current_start))
+
+        # Make closed list
+        closed_list = set()
         
         # find shortest path
-        while open_list.size > 0 and self.target.g > (open_list.returnMin().g + open_list.returnMin().h):
+        while open_list.size > 0 and self.target.g > (open_list.returnMin()[1].g + open_list.returnMin()[1].h):
             # get node with smallest f, this node gets EXPANDED.
-            min_node = open_list.returnMin()
+            min_node = open_list.returnMin()[1]
             open_list.remove()
-            if (min_node.g > self.node_grid[min_node.x][min_node.y].g):
+
+            # SWAP WITH CHECK IN CLOSED LIST
+            if (min_node in closed_list):
                 continue
+
+            closed_list.add(min_node)
 
             self.expanded_count += 1
 
@@ -258,7 +262,7 @@ class Run:
                 if min_node.g + 1 < adj_node.g:
                     adj_node.g = min_node.g + 1
                     adj_node.parent = self.node_grid[min_node.x][min_node.y]
-                    open_list.insert(copy.deepcopy(adj_node))
+                    open_list.insert((self.f(adj_node), adj_node))
 
         # no path to the goal was found if open list is exhausted, so return with nothing
         if open_list.size == 0:
@@ -273,7 +277,8 @@ class Run:
         path.append(current_start)
 
         if self.adaptive:
-            self.calculate_h()
+            for node in closed_list:
+                node.h = node.h = self.h(node)
             
         return path[::-1]
 
@@ -286,7 +291,8 @@ NUM_TRIALS = 10
 MAP_WIDTH = 50 # default 101
 
 # DEFAULT
-Run(MAP_WIDTH, print=False)
+Run(MAP_WIDTH)
+Run(MAP_WIDTH, True, True, True)
 
 # TEST REPEATED FORWARD A*
 
