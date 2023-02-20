@@ -27,12 +27,15 @@ class Run:
         else:
             self.compare = self.compare_favor_smaller_g
 
+        self.calculate_h()
+
+        self.a_star()
+
+    def calculate_h(self):
         # initialize h values for each node
         for row in self.node_grid:
             for node in row:
                 node.h = self.h(node)
-
-        self.a_star()
 
     def a_star(self):
         path = self.repeated_a_star()
@@ -129,6 +132,9 @@ class Run:
 
             # update counter
             counter += 1
+        
+        if self.adaptive:
+            self.calculate_h()
 
         return final_path
 
@@ -197,6 +203,9 @@ class Run:
             path.append(curr_node)
             curr_node = curr_node.parent
         path.append(self.target)
+
+        if self.adaptive:
+            self.calculate_h()
     
         return path
             
