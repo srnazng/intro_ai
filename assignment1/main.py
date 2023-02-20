@@ -70,14 +70,14 @@ class Run:
                     print('_ |', end = ' ')
             print()
 
-    # n1 and n2 in format (h, Node)
+    # n1 and n2 in format (f, Node)
     def compare_favor_larger_g(self, n1, n2):
         #in favor of larger g values
         return (self.size**2 * n1[0] - n1[1].g) - (self.size**2 * n2[0] - n2[1].g)
 
     def compare_favor_smaller_g(self, n1, n2):
         #in favor of smaller g values
-        return (self.size**2 * n1[0] - n1[1].g) - (self.size**2 * n2[0] - n2[1].g)
+        return (self.size**2 * n1[0] - n1[1].h) - (self.size**2 * n2[0] - n2[1].h)
 
     def h(self, node):
         if self.adaptive:
@@ -307,6 +307,8 @@ MAP_WIDTH = 101 # default 101
 
 gridworld_arr = []
 
+print("GENERATING", NUM_TRIALS, "GRIDWORLDS OF WIDTH", MAP_WIDTH, "...")
+
 for i in range(NUM_TRIALS):
     gridworld_arr.append(GridWorld(MAP_WIDTH))
 
@@ -319,12 +321,12 @@ print("TEST REPEATED FORWARD A*")
 total_time_1 = 0.0
 total_expanded_1 = 0
 for i in range(NUM_TRIALS):
-    print(f"Trial {i + 1}")
     start = time.time()
     run_instance = Run(MAP_WIDTH, True, False, True, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=False, favor_larger_g=True, print=False
     total_expanded_1 += run_instance.expanded_count
     end = time.time()
     total_time_1 = total_time_1 + (end - start)
+    print(f"Trial {i + 1}: ", str(end - start), "runtime", run_instance.expanded_count, "expansions")
 avg_time_1 = total_time_1 / NUM_TRIALS
 avg_expanded_1 = total_expanded_1 / NUM_TRIALS
 
@@ -333,12 +335,12 @@ print("TEST REPEATED BACKWARD A*")
 total_time_2 = 0.0
 total_expanded_2 = 0
 for i in range(NUM_TRIALS):
-    print(f"Trial {i + 1}")
     start = time.time()
     run_instance = Run(MAP_WIDTH, False, False, True, False, copy.deepcopy(gridworld_arr[i])) # forward=False, adaptive=False, favor_larger_g=True, print=False
     total_expanded_2 += run_instance.expanded_count
     end = time.time()
     total_time_2 = total_time_2 + (end - start)
+    print(f"Trial {i + 1}: ", str(end - start), "runtime", run_instance.expanded_count, "expansions")
 avg_time_2 = total_time_2 / NUM_TRIALS
 avg_expanded_2 = total_expanded_2 / NUM_TRIALS 
 
@@ -347,32 +349,35 @@ print("TEST ADAPTIVE A*")
 total_time_3 = 0.0
 total_expanded_3 = 0
 for i in range(NUM_TRIALS):
-    print(f"Trial {i + 1}")
     start = time.time()
     run_instance = Run(MAP_WIDTH, True, True, True, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=True, favor_larger_g=True, print=False
     total_expanded_3 += run_instance.expanded_count
     end = time.time()
     total_time_3 = total_time_3 + (end - start)
+    print(f"Trial {i + 1}: ", str(end - start), "runtime", run_instance.expanded_count, "expansions")
 avg_time_3 = total_time_3 / NUM_TRIALS
 avg_expanded_3 = total_expanded_3 / NUM_TRIALS
 
 # TEST REPEATED FORWARD A* WITH TIE BREAKING FAVORING SMALLER G
 print("TEST REPEATED FORWARD A* WITH TIE BREAKING FAVORING SMALLER G")
 total_time_4 = 0.0
+total_expanded_4 = 0
 for i in range(NUM_TRIALS):
-    print(f"Trial {i + 1}")
     start = time.time()
-    Run(MAP_WIDTH, True, False, False, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=True, favor_larger_g=False, print=False
+    run_instance = Run(MAP_WIDTH, True, False, False, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=True, favor_larger_g=False, print=False
+    total_expanded_4 += run_instance.expanded_count
     end = time.time()
     total_time_4 = total_time_4 + (end - start)
+    print(f"Trial {i + 1}: ", str(end - start), "runtime", run_instance.expanded_count, "expansions")
 avg_time_4 = total_time_4 / NUM_TRIALS
+avg_expanded_4 = total_expanded_4 / NUM_TRIALS
 
 # PRINT RESULTS
 print("TEST REPEATED FORWARD A*:")
 print(f" Average Runtime: {avg_time_1}, Average expanded nodes: {avg_expanded_1}")
 print("TEST REPEATED BACKWARD A*:")
 print(f" Average Runtime: {avg_time_2}, Average expanded nodes: {avg_expanded_2}")
-print("TEST ADAPTIVE REPEATECD FORWARD A*:")
+print("TEST ADAPTIVE REPEATED FORWARD A*:")
 print(f" Average Runtime: {avg_time_3}, Average expanded nodes: {avg_expanded_3}")
 print("TEST REPEATED FORWARD A* FAVORING SMALLER G:")
-print(" Average Runtime:", avg_time_4)
+print(f" Average Runtime: {avg_time_4}, Average expanded nodes: {avg_expanded_4}")
