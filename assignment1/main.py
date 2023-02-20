@@ -3,6 +3,7 @@ from Heap import MinHeap
 from Node import Node
 import sys
 import time
+import copy
 
 dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
@@ -76,7 +77,7 @@ class Run:
 
     def compare_favor_smaller_g(self, n1, n2):
         #in favor of smaller g values
-        return (self.size**2 * self.f(n1) - n1.g) - (self.size**2*self.f(n2) - n2.g)
+        return (self.size**2 * n1[0] - n1[1].g) - (self.size**2 * n2[0] - n2[1].g)
 
     def h(self, node):
         if self.adaptive:
@@ -153,19 +154,28 @@ class Run:
         current_start.search = counter
         
         # Insert starting node of A* as the first node
+        self.target.h = self.manhattan(current_start, self.target)
         open_list.insert((self.f(self.target), self.target))
         
+        # Make closed list
+        closed_list = set()
+
         # find shortest path
         while open_list.size > 0 and current_start.g > (open_list.returnMin()[1].g + open_list.returnMin()[1].h):
             # get node with smallest f, this node gets EXPANDED.
             min_node = open_list.returnMin()[1]
             open_list.remove()
-            if (min_node.g > self.node_grid[min_node.x][min_node.y].g):
+            
+            # check if min_node already expanded
+            if (min_node in closed_list):
                 continue
+
+            closed_list.add(min_node)
 
             self.expanded_count += 1
 
             # print(f"Popping: {min_node.x}, {min_node.y}. Target: {self.target.x}, {self.target.y}")
+            # open_list.Print()
             
             # FIND SHORTEST PATH USING CURRENT KNOWLEDGE
             # Loop through all the neighbors of the node. 
@@ -187,9 +197,10 @@ class Run:
                     adj_node.search = counter
                 
                 # update cost of adj_node and insert into open list
-                if min_node.g + 1 < adj_node.g:
+                if min_node.g + 1 < adj_node.g and adj_node not in closed_list:
                     adj_node.g = min_node.g + 1
                     adj_node.parent = self.node_grid[min_node.x][min_node.y]
+                    adj_node.h = self.manhattan(current_start, adj_node)
                     open_list.insert((self.f(adj_node), adj_node))
 
         # no path to the goal was found if open list is exhausted, so return with nothing
@@ -232,7 +243,7 @@ class Run:
             min_node = open_list.returnMin()[1]
             open_list.remove()
 
-            # SWAP WITH CHECK IN CLOSED LIST
+            # check if min_node already expanded
             if (min_node in closed_list):
                 continue
 
@@ -291,7 +302,7 @@ class Run:
             return node.g + node.h
         return -1
 
-NUM_TRIALS = 10
+NUM_TRIALS = 50
 MAP_WIDTH = 101 # default 101
 
 gridworld_arr = []
@@ -300,17 +311,17 @@ for i in range(NUM_TRIALS):
     gridworld_arr.append(GridWorld(MAP_WIDTH))
 
 # DEFAULT
-# print(Run(MAP_WIDTH).expanded_count)
-# print(Run(MAP_WIDTH, True, True, True).expanded_count)
+# print(Run(MAP_WIDTH, True, False, True, True, copy.deepcopy(gridworld_arr[0])).expanded_count)
+# print(Run(MAP_WIDTH, False, False, True, True, copy.deepcopy(gridworld_arr[0])).expanded_count)
 
 # TEST REPEATED FORWARD A*
-
+print("TEST REPEATED FORWARD A*")
 total_time_1 = 0.0
 total_expanded_1 = 0
 for i in range(NUM_TRIALS):
-    print(f"Trial {i}")
+    print(f"Trial {i + 1}")
     start = time.time()
-    run_instance = Run(MAP_WIDTH, True, False, True, False, gridworld_arr[i]) # forward=True, adaptive=False, favor_larger_g=True, print=False
+    run_instance = Run(MAP_WIDTH, True, False, True, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=False, favor_larger_g=True, print=False
     total_expanded_1 += run_instance.expanded_count
     end = time.time()
     total_time_1 = total_time_1 + (end - start)
@@ -318,46 +329,50 @@ avg_time_1 = total_time_1 / NUM_TRIALS
 avg_expanded_1 = total_expanded_1 / NUM_TRIALS
 
 # TEST REPEATED BACKWARD A*
-# total_time_2 = 0.0
-# total_expanded_2 = 0
-# for i in range(NUM_TRIALS):
-#     print(f"Trial {i}")
-#     start = time.time()
-#     run_instance = Run(MAP_WIDTH, False, False, True, False, gridworld_arr[i]) # forward=False, adaptive=False, favor_larger_g=True, print=False
-#     total_expanded_2 += run_instance.expanded_count
-#     end = time.time()
-#     total_time_2 = total_time_2 + (end - start)
-# avg_time_2 = total_time_2 / NUM_TRIALS
-# avg_expanded_2 = total_expanded_2 / NUM_TRIALS 
+print("TEST REPEATED BACKWARD A*")
+total_time_2 = 0.0
+total_expanded_2 = 0
+for i in range(NUM_TRIALS):
+    print(f"Trial {i + 1}")
+    start = time.time()
+    run_instance = Run(MAP_WIDTH, False, False, True, False, copy.deepcopy(gridworld_arr[i])) # forward=False, adaptive=False, favor_larger_g=True, print=False
+    total_expanded_2 += run_instance.expanded_count
+    end = time.time()
+    total_time_2 = total_time_2 + (end - start)
+avg_time_2 = total_time_2 / NUM_TRIALS
+avg_expanded_2 = total_expanded_2 / NUM_TRIALS 
 
 # TEST ADAPTIVE A*
+print("TEST ADAPTIVE A*")
 total_time_3 = 0.0
 total_expanded_3 = 0
 for i in range(NUM_TRIALS):
-    print(f"Trial {i}")
+    print(f"Trial {i + 1}")
     start = time.time()
-    run_instance = Run(MAP_WIDTH, True, True, True, False, gridworld_arr[i]) # forward=True, adaptive=True, favor_larger_g=True, print=False
+    run_instance = Run(MAP_WIDTH, True, True, True, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=True, favor_larger_g=True, print=False
     total_expanded_3 += run_instance.expanded_count
     end = time.time()
     total_time_3 = total_time_3 + (end - start)
 avg_time_3 = total_time_3 / NUM_TRIALS
 avg_expanded_3 = total_expanded_3 / NUM_TRIALS
 
-# # TEST REPEATED FORWARD A* WITH TIE BREAKING FAVORING SMALLER G
-# total_time_4 = 0.0
-# for i in range(NUM_TRIALS):
-#     start = time.time()
-#     Run(MAP_WIDTH, True, False, False, False, gridworld_arr[i]) # forward=True, adaptive=True, favor_larger_g=False, print=False
-#     end = time.time()
-#     total_time_4 = total_time_4 + (end - start)
-# avg_time_4 = total_time_4 / NUM_TRIALS
+# TEST REPEATED FORWARD A* WITH TIE BREAKING FAVORING SMALLER G
+print("TEST REPEATED FORWARD A* WITH TIE BREAKING FAVORING SMALLER G")
+total_time_4 = 0.0
+for i in range(NUM_TRIALS):
+    print(f"Trial {i + 1}")
+    start = time.time()
+    Run(MAP_WIDTH, True, False, False, False, copy.deepcopy(gridworld_arr[i])) # forward=True, adaptive=True, favor_larger_g=False, print=False
+    end = time.time()
+    total_time_4 = total_time_4 + (end - start)
+avg_time_4 = total_time_4 / NUM_TRIALS
 
 # PRINT RESULTS
 print("TEST REPEATED FORWARD A*:")
 print(f" Average Runtime: {avg_time_1}, Average expanded nodes: {avg_expanded_1}")
-# print("TEST REPEATED BACKWARD A*:")
-# print(f" Average Runtime: {avg_time_2}, Average expanded nodes: {avg_expanded_2}")
+print("TEST REPEATED BACKWARD A*:")
+print(f" Average Runtime: {avg_time_2}, Average expanded nodes: {avg_expanded_2}")
 print("TEST ADAPTIVE REPEATECD FORWARD A*:")
 print(f" Average Runtime: {avg_time_3}, Average expanded nodes: {avg_expanded_3}")
-# print("TEST REPEATED FORWARD A* FAVORING SMALLER G:")
-# print(" Average Runtime:", avg_time_4)
+print("TEST REPEATED FORWARD A* FAVORING SMALLER G:")
+print(" Average Runtime:", avg_time_4)
