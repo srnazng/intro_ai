@@ -8,11 +8,13 @@ dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
 
 class Run:
-    def __init__(self, size, forward=True, adaptive=False, favor_larger_g=True, print=True):
-        self.adaptive = adaptive
+    def __init__(self, size, forward=True, adaptive=False, favor_larger_g=True, print=True, gridworld=None):
         self.is_forward = forward
         self.size = size
-        self.gridworld = GridWorld(size)
+        if gridworld is None:
+            self.gridworld = GridWorld(size)
+        else:
+            self.gridworld = gridworld
         self.print = print
         if print:
             self.gridworld.print_grid()
@@ -26,8 +28,9 @@ class Run:
         else:
             self.compare = self.compare_favor_smaller_g
 
+        self.adaptive = False
         self.calculate_h()
-
+        self.adaptive = adaptive
         self.a_star()
 
     def calculate_h(self):
@@ -238,6 +241,7 @@ class Run:
             self.expanded_count += 1
 
             # print(f"Popping: {min_node.x}, {min_node.y}. Target: {self.target.x}, {self.target.y}")
+            # open_list.Print()
             
             # FIND SHORTEST PATH USING CURRENT KNOWLEDGE
             # Loop through all the neighbors of the node. 
@@ -259,7 +263,7 @@ class Run:
                     adj_node.search = counter
                 
                 # update cost of adj_node and insert into open list
-                if min_node.g + 1 < adj_node.g:
+                if min_node.g + 1 < adj_node.g and adj_node not in closed_list:
                     adj_node.g = min_node.g + 1
                     adj_node.parent = self.node_grid[min_node.x][min_node.y]
                     open_list.insert((self.f(adj_node), adj_node))
@@ -288,11 +292,16 @@ class Run:
         return -1
 
 NUM_TRIALS = 10
-MAP_WIDTH = 50 # default 101
+MAP_WIDTH = 101 # default 101
+
+gridworld_arr = []
+
+for i in range(NUM_TRIALS):
+    gridworld_arr.append(GridWorld(MAP_WIDTH))
 
 # DEFAULT
-Run(MAP_WIDTH)
-Run(MAP_WIDTH, True, True, True)
+# print(Run(MAP_WIDTH).expanded_count)
+# print(Run(MAP_WIDTH, True, True, True).expanded_count)
 
 # TEST REPEATED FORWARD A*
 
@@ -301,7 +310,7 @@ total_expanded_1 = 0
 for i in range(NUM_TRIALS):
     print(f"Trial {i}")
     start = time.time()
-    run_instance = Run(MAP_WIDTH, True, False, True, False) # forward=True, adaptive=False, favor_larger_g=True, print=False
+    run_instance = Run(MAP_WIDTH, True, False, True, False, gridworld_arr[i]) # forward=True, adaptive=False, favor_larger_g=True, print=False
     total_expanded_1 += run_instance.expanded_count
     end = time.time()
     total_time_1 = total_time_1 + (end - start)
@@ -314,7 +323,7 @@ avg_expanded_1 = total_expanded_1 / NUM_TRIALS
 # for i in range(NUM_TRIALS):
 #     print(f"Trial {i}")
 #     start = time.time()
-#     run_instance = Run(MAP_WIDTH, False, False, True, False) # forward=False, adaptive=False, favor_larger_g=True, print=False
+#     run_instance = Run(MAP_WIDTH, False, False, True, False, gridworld_arr[i]) # forward=False, adaptive=False, favor_larger_g=True, print=False
 #     total_expanded_2 += run_instance.expanded_count
 #     end = time.time()
 #     total_time_2 = total_time_2 + (end - start)
@@ -327,7 +336,7 @@ total_expanded_3 = 0
 for i in range(NUM_TRIALS):
     print(f"Trial {i}")
     start = time.time()
-    run_instance = Run(MAP_WIDTH, True, True, True, False) # forward=True, adaptive=True, favor_larger_g=True, print=False
+    run_instance = Run(MAP_WIDTH, True, True, True, False, gridworld_arr[i]) # forward=True, adaptive=True, favor_larger_g=True, print=False
     total_expanded_3 += run_instance.expanded_count
     end = time.time()
     total_time_3 = total_time_3 + (end - start)
@@ -338,7 +347,7 @@ avg_expanded_3 = total_expanded_3 / NUM_TRIALS
 # total_time_4 = 0.0
 # for i in range(NUM_TRIALS):
 #     start = time.time()
-#     Run(MAP_WIDTH, True, False, False, False) # forward=True, adaptive=True, favor_larger_g=False, print=False
+#     Run(MAP_WIDTH, True, False, False, False, gridworld_arr[i]) # forward=True, adaptive=True, favor_larger_g=False, print=False
 #     end = time.time()
 #     total_time_4 = total_time_4 + (end - start)
 # avg_time_4 = total_time_4 / NUM_TRIALS

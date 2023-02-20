@@ -59,8 +59,10 @@ class MinHeap:
 	# Function: print heap
 	def Print(self):
 		for i in range(1, (self.size//2)+1):
-			print(" PARENT : " + str(self.Heap[i]) + " LEFT CHILD : " + str(self.Heap[2 * i]) + " RIGHT CHILD : " +
-				str(self.Heap[2 * i + 1]))
+			print(" PARENT : " + str(self.Heap[i][0]) + " - " + str(self.Heap[i][1].x) + "," + str(self.Heap[i][1].y) 
+			+ " LEFT CHILD : " + str(self.Heap[2 * i][0]) + " - " + str(self.Heap[2 * i][1].x) + "," + str(self.Heap[2 * i][1].y) 
+			+ " RIGHT CHILD : " + str(self.Heap[2 * i + 1][0]) + " - " + str(self.Heap[2 * i + 1][1].x) + "," + str(self.Heap[2 * i + 1][1].y) 
+			)
 
 	# Function: build min heap using minHeapify
 	def minHeap(self):
