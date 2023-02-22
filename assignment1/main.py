@@ -320,10 +320,6 @@ print("GENERATING", NUM_TRIALS, "GRIDWORLDS OF WIDTH", MAP_WIDTH, "...")
 for i in range(NUM_TRIALS):
     gridworld_arr.append(GridWorld(MAP_WIDTH))
 
-# DEFAULT
-# print(Run(MAP_WIDTH, True, False, True, True, copy.deepcopy(gridworld_arr[0])).expanded_count)
-# print(Run(MAP_WIDTH, False, False, True, True, copy.deepcopy(gridworld_arr[0])).expanded_count)
-
 # TEST REPEATED FORWARD A*
 print("TEST REPEATED FORWARD A*")
 total_time_1 = 0.0
@@ -379,6 +375,9 @@ for i in range(NUM_TRIALS):
     print(f"Trial {i + 1}: ", str(end - start), "runtime", run_instance.expanded_count, "expansions")
 avg_time_4 = total_time_4 / NUM_TRIALS
 avg_expanded_4 = total_expanded_4 / NUM_TRIALS
+
+# SHOW PRINTED
+print(Run(MAP_WIDTH, True, False, True, True, copy.deepcopy(gridworld_arr[0])).expanded_count)
 
 # PRINT RESULTS
 print("TEST REPEATED FORWARD A*:")
