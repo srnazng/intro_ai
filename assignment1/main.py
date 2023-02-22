@@ -4,6 +4,7 @@ from Node import Node
 import sys
 import time
 import copy
+import random
 
 dx = [-1, 0, 0, 1] # boundaries of x values
 dy = [0, 1, -1, 0] # boundaries of y values
@@ -73,11 +74,18 @@ class Run:
     # n1 and n2 in format (f, Node)
     def compare_favor_larger_g(self, n1, n2):
         #in favor of larger g values
-        return (self.size**2 * n1[0] - n1[1].g) - (self.size**2 * n2[0] - n2[1].g)
+        compare = (self.size**2 * n1[0] - n1[1].g) - (self.size**2 * n2[0] - n2[1].g)
+        if compare == 0:
+            return random.random() < 0.5
+        return compare
+        
 
     def compare_favor_smaller_g(self, n1, n2):
         #in favor of smaller g values
-        return (self.size**2 * n1[0] - n1[1].h) - (self.size**2 * n2[0] - n2[1].h)
+        compare = (self.size**2 * n1[0] - n1[1].h) - (self.size**2 * n2[0] - n2[1].h)
+        if compare == 0:
+            return random.random() < 0.5
+        return compare
 
     def h(self, node):
         if self.adaptive:
