@@ -59,9 +59,47 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     To get the list of all possible features or labels, use self.features and 
     self.legalLabels.
     """
-
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    ##Setup table featureLabelCount containing count(feature, label) here. 
+    ##Keys of table are [(feature), valueOfFeature, Label].
+    ##Also setup featureCount, which is counter of labels
+    self.featureLabelCount = util.Counter()
+    self.labelCount = util.Counter()
+    
+    for datum, label in zip(trainingData, trainingLabels):
+      for feature in self.features:
+        self.featureLabelCount[feature, datum[feature], label] += 1
+        self.labelCount[label] += 1
+
+    #Validation  
+    if not self.automaticTuning:
+      return
+    
+    max_accuracy = 0
+    best_k = -1
+    for k in kgrid:
+      self.k = k
+      guesses = [self.makeGuess(datum) for datum in validationData]
+      accuracy = self.calculateAccuracy(guesses, validationLabels)
+      if accuracy > max_accuracy:
+        max_accuracy = accuracy
+        best_k = k
+
+    self.k = best_k
+    
+
+  ##Make a guess of the label give the datum
+  def makeGuess(self, datum):
+    posterior = self.calculateLogJointProbabilities(datum)
+    return posterior.argMax()
+  
+  ##Calculates the accuracy of guesses, when compared to 
+  def calculateAccuracy(self, guesses, labels):
+    correct = 0
+    for guess, label in zip(guesses, labels):
+      correct += (guess == label)
+
+    return float(correct) / len(labels)
         
   def classify(self, testData):
     """
@@ -86,10 +124,22 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     To get the list of all possible features or labels, use self.features and 
     self.legalLabels.
     """
-    logJoint = util.Counter()
-    
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    logJoint = util.Counter()
+    for label in self.legalLabels:
+      logJoint[label] += (math.log(self.labelCount[label]) - math.log(self.labelCount.totalCount())) ##probability of label
+      
+      for feature in self.features:
+        count = self.featureLabelCount[feature, datum[feature], label]
+        totCount = self.labelCount[label]
+
+        countSmoothed = count + self.k
+
+        logJoint[label] += (math.log(countSmoothed))
+
+      numFeatures = len(self.features)
+      logJoint[label] -= numFeatures *  math.log(self.labelCount[label] + 2 * self.k) ##subtract denominators of all conditional probs; assumes each feature takes on 2 values
     
     return logJoint
   
