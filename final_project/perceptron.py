@@ -8,6 +8,7 @@
 
 # Perceptron implementation
 import util
+import random
 PRINT = True
 
 class PerceptronClassifier:
@@ -49,9 +50,10 @@ class PerceptronClassifier:
     for iteration in range(self.max_iterations):
       print "Starting iteration ", iteration, "..."
       
-      for i in range(len(trainingData)):
+      random_indices = random.sample(range(len(trainingData)), len(trainingData))
+      for count in range(len(trainingData)):
           "*** YOUR CODE HERE ***"
-          
+          i = random_indices[count]
           # calculate scores
           scores = util.Counter()
           for label in self.legalLabels:
