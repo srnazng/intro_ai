@@ -1,0 +1,66 @@
+Doing classification
+--------------------
+data:		faces
+classifier:		perceptron
+using enhanced features?:	False
+training set size:	100
+ 
+Training data size: 45
+Percent: 0.10
+Mean: 0.78600
+Standard Deviation: 0.07473
+Time per data point: 0.03354
+ 
+Training data size: 90
+Percent: 0.20
+Mean: 0.85600
+Standard Deviation: 0.01855
+Time per data point: 0.03129
+ 
+Training data size: 135
+Percent: 0.30
+Mean: 0.87800
+Standard Deviation: 0.00980
+Time per data point: 0.02934
+ 
+Training data size: 180
+Percent: 0.40
+Mean: 0.87800
+Standard Deviation: 0.00980
+Time per data point: 0.02922
+ 
+Training data size: 225
+Percent: 0.50
+Mean: 0.87400
+Standard Deviation: 0.01200
+Time per data point: 0.02941
+ 
+Training data size: 270
+Percent: 0.60
+Mean: 0.88000
+Standard Deviation: 0.00000
+Time per data point: 0.02984
+ 
+Training data size: 315
+Percent: 0.70
+Mean: 0.88000
+Standard Deviation: 0.00000
+Time per data point: 0.02996
+ 
+Training data size: 360
+Percent: 0.80
+Mean: 0.88000
+Standard Deviation: 0.00000
+Time per data point: 0.03054
+ 
+Training data size: 405
+Percent: 0.90
+Mean: 0.88000
+Standard Deviation: 0.00000
+Time per data point: 0.02998
+ 
+Training data size: 451
+Percent: 1.00
+Mean: 0.88000
+Standard Deviation: 0.00000
+Time per data point: 0.02855

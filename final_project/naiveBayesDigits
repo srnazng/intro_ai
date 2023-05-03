@@ -1,0 +1,67 @@
+Doing classification
+--------------------
+data:		digits
+classifier:		naiveBayes
+using enhanced features?:	False
+training set size:	100
+using automatic tuning for naivebayes
+ 
+Training data size: 500
+Percent: 0.10
+Mean: 0.76800
+Standard Deviation: 0.01720
+Time per data point: 0.03593
+ 
+Training data size: 1000
+Percent: 0.20
+Mean: 0.77600
+Standard Deviation: 0.01020
+Time per data point: 0.01871
+ 
+Training data size: 1500
+Percent: 0.30
+Mean: 0.77600
+Standard Deviation: 0.01497
+Time per data point: 0.01285
+ 
+Training data size: 2000
+Percent: 0.40
+Mean: 0.78000
+Standard Deviation: 0.01673
+Time per data point: 0.01078
+ 
+Training data size: 2500
+Percent: 0.50
+Mean: 0.79000
+Standard Deviation: 0.00894
+Time per data point: 0.00827
+ 
+Training data size: 3000
+Percent: 0.60
+Mean: 0.78800
+Standard Deviation: 0.01166
+Time per data point: 0.00740
+ 
+Training data size: 3500
+Percent: 0.70
+Mean: 0.79600
+Standard Deviation: 0.01200
+Time per data point: 0.00644
+ 
+Training data size: 4000
+Percent: 0.80
+Mean: 0.78800
+Standard Deviation: 0.00400
+Time per data point: 0.00646
+ 
+Training data size: 4500
+Percent: 0.90
+Mean: 0.79000
+Standard Deviation: 0.00000
+Time per data point: 0.00533
+ 
+Training data size: 5000
+Percent: 1.00
+Mean: 0.79000
+Standard Deviation: 0.00000
+Time per data point: 0.00499

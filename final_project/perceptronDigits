@@ -1,0 +1,66 @@
+Doing classification
+--------------------
+data:		digits
+classifier:		perceptron
+using enhanced features?:	False
+training set size:	100
+ 
+Training data size: 500
+Percent: 0.10
+Mean: 0.76600
+Standard Deviation: 0.05314
+Time per data point: 0.02612
+ 
+Training data size: 1000
+Percent: 0.20
+Mean: 0.82000
+Standard Deviation: 0.03033
+Time per data point: 0.02578
+ 
+Training data size: 1500
+Percent: 0.30
+Mean: 0.82600
+Standard Deviation: 0.03720
+Time per data point: 0.02521
+ 
+Training data size: 2000
+Percent: 0.40
+Mean: 0.83600
+Standard Deviation: 0.02332
+Time per data point: 0.02581
+ 
+Training data size: 2500
+Percent: 0.50
+Mean: 0.82400
+Standard Deviation: 0.03072
+Time per data point: 0.02614
+ 
+Training data size: 3000
+Percent: 0.60
+Mean: 0.84200
+Standard Deviation: 0.01470
+Time per data point: 0.02633
+ 
+Training data size: 3500
+Percent: 0.70
+Mean: 0.86000
+Standard Deviation: 0.01789
+Time per data point: 0.02480
+ 
+Training data size: 4000
+Percent: 0.80
+Mean: 0.85000
+Standard Deviation: 0.01549
+Time per data point: 0.02134
+ 
+Training data size: 4500
+Percent: 0.90
+Mean: 0.85400
+Standard Deviation: 0.01625
+Time per data point: 0.85123
+ 
+Training data size: 5000
+Percent: 1.00
+Mean: 0.86000
+Standard Deviation: 0.01265
+Time per data point: 0.02560

@@ -1,0 +1,67 @@
+Doing classification
+--------------------
+data:		faces
+classifier:		naiveBayes
+using enhanced features?:	False
+training set size:	100
+using automatic tuning for naivebayes
+ 
+Training data size: 45
+Percent: 0.10
+Mean: 0.67400
+Standard Deviation: 0.06681
+Time per data point: 0.42856
+ 
+Training data size: 90
+Percent: 0.20
+Mean: 0.81600
+Standard Deviation: 0.04673
+Time per data point: 0.22023
+ 
+Training data size: 135
+Percent: 0.30
+Mean: 0.83800
+Standard Deviation: 0.01939
+Time per data point: 0.15191
+ 
+Training data size: 180
+Percent: 0.40
+Mean: 0.85200
+Standard Deviation: 0.02315
+Time per data point: 0.11811
+ 
+Training data size: 225
+Percent: 0.50
+Mean: 0.86000
+Standard Deviation: 0.01414
+Time per data point: 0.09297
+ 
+Training data size: 270
+Percent: 0.60
+Mean: 0.86400
+Standard Deviation: 0.00800
+Time per data point: 0.08053
+ 
+Training data size: 315
+Percent: 0.70
+Mean: 0.88200
+Standard Deviation: 0.01939
+Time per data point: 0.07227
+ 
+Training data size: 360
+Percent: 0.80
+Mean: 0.88800
+Standard Deviation: 0.01166
+Time per data point: 0.06750
+ 
+Training data size: 405
+Percent: 0.90
+Mean: 0.88800
+Standard Deviation: 0.01470
+Time per data point: 0.05487
+ 
+Training data size: 451
+Percent: 1.00
+Mean: 0.89000
+Standard Deviation: 0.00000
+Time per data point: 0.05141
