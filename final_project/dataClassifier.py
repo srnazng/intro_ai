@@ -17,6 +17,7 @@ import samples
 import sys
 import util
 import time
+import random
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -25,7 +26,7 @@ FACE_DATUM_WIDTH=60
 FACE_DATUM_HEIGHT=70
 
 TEST = True # enable testing for stats
-PRINT = False 
+PRINT = True 
 
 def basicFeatureExtractorDigit(datum):
   """
@@ -141,7 +142,7 @@ def enhancedFeatureExtractorFace(datum):
 
   return features
 
-def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage, time_per_data):
+def analysis(classifier, accuracy_list, testLabels, testData, rawTestData, printImage, time_per_data):
   """
   This function is called after learning.
   Include any code that you want here to help you analyze your results.
@@ -162,16 +163,8 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage,
   (and you can modify the signature if you want).
   """
   # Put any code here...
-  correct_arr = []
-  for i in range(len(guesses)):
-      prediction = guesses[i]
-      truth = testLabels[i]
-      if prediction == truth:
-        correct_arr.append(1)
-      else:
-        correct_arr.append(0)
-  avg = mean(correct_arr)
-  stdev = std(correct_arr)
+  avg = mean(accuracy_list)
+  stdev = std(accuracy_list)
 
   print "Mean: %.5f" % avg
   print "Standard Deviation: %.5f" % stdev
@@ -377,12 +370,14 @@ def runClassifier(args, options):
   numTest = options.test
 
   iterations = 1
+  inner_iterations = 1
   if TEST:
     if options.data == "digits":
       numTraining = 5000
     else:
       numTraining = 451
     iterations = 10
+    inner_iterations = 5
 
   if(options.data=="faces"):
     rawTrainingData = samples.loadDataFile("facedata/facedatatrain", numTraining,FACE_DATUM_WIDTH,FACE_DATUM_HEIGHT)
@@ -400,49 +395,64 @@ def runClassifier(args, options):
     testLabels = samples.loadLabelsFile("digitdata/testlabels", numTest)
     
   for x in range(iterations):
+    accuracy_list = []
+    time_list = []
     percent = int((x+1)*0.1*numTraining)
     p = (x+1)*0.1
-
+    
     if TEST:
       options.training = percent
 
-    # Extract features
-    if PRINT:
-      print "Extracting features..."
+    for y in range(inner_iterations):
+      # Extract features
+      if PRINT:
+        print "Extracting features..."
 
-    trainingData = map(featureFunction, rawTrainingData[0:options.training])
-    validationData = map(featureFunction, rawValidationData)
-    testData = map(featureFunction, rawTestData)
-    
-    # Conduct training and testing
-    if PRINT:
-      print "Training..."
-    training_start = time.time()
-    classifier.train(trainingData, trainingLabels, validationData, validationLabels)
-    training_end = time.time()
-    time_per_data = (training_end - training_start) / options.training
-    
-    if PRINT:
-      print "Validating..."
-    guesses = classifier.classify(validationData)
-    correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
-    
-    if PRINT:
-      print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
-    
-    if PRINT:
-      print "Testing..."
-    guesses = classifier.classify(testData)
-    correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
-    
-    if PRINT:
-      print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-    
+      random_indices = random.sample(range(len(rawTrainingData)), options.training)
+      random_train_sample = [rawTrainingData[i] for i in random_indices]
+      random_train_labels = [trainingLabels[i] for i in random_indices]
+
+
+      trainingData = map(featureFunction, random_train_sample)
+      validationData = map(featureFunction, rawValidationData)
+      testData = map(featureFunction, rawTestData)
+      
+      
+      # Conduct training and testing
+      if PRINT:
+        print "Training..."
+      training_start = time.time()
+      classifier.train(trainingData, random_train_labels, validationData, validationLabels)
+      training_end = time.time()
+
+      time_per_data = (training_end - training_start) / options.training
+      time_list.append(time_per_data)
+      
+      if PRINT:
+        print "Validating..."
+      guesses = classifier.classify(validationData)
+      correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
+      
+      if PRINT:
+        print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
+      
+      if PRINT:
+        print "Testing..."
+      guesses = classifier.classify(testData)
+      correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
+      accuracy = float(correct) / len(testLabels)
+      
+      if PRINT:
+        print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * accuracy)
+
+      accuracy_list.append(accuracy)
+      
     if TEST:
       print " "
       print "Training data size: %d" % percent
       print "Percent: %.2f" % p
-    analysis(classifier, guesses, testLabels, testData, rawTestData, printImage, time_per_data)
+      
+    analysis(classifier, accuracy_list, testLabels, testData, rawTestData, printImage, mean(time_list))
     
   # do odds ratio computation if specified at command line
   if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):

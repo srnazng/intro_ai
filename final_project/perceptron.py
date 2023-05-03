@@ -46,17 +46,13 @@ class PerceptronClassifier:
     
     # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
     # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
-
+    
     for iteration in range(self.max_iterations):
       if PRINT:
         print "Starting iteration ", iteration, "..."
       
-      random_indices = random.sample(range(len(trainingData)), len(trainingData))
-      for count in range(len(trainingData)):
+      for i in range(len(trainingData)):
           "*** YOUR CODE HERE ***"
-          i = random_indices[count]
-          # i = count # comment out to remove randomness
-          
           # calculate scores
           scores = util.Counter()
           for label in self.legalLabels:
