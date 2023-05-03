@@ -24,6 +24,7 @@ DIGIT_DATUM_HEIGHT=28
 FACE_DATUM_WIDTH=60
 FACE_DATUM_HEIGHT=70
 
+TEST = True # enable testing for stats
 
 def basicFeatureExtractorDigit(datum):
   """
@@ -139,7 +140,7 @@ def enhancedFeatureExtractorFace(datum):
 
   return features
 
-def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
+def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage, time_per_data):
   """
   This function is called after learning.
   Include any code that you want here to help you analyze your results.
@@ -159,19 +160,33 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
   This code won't be evaluated. It is for your own optional use
   (and you can modify the signature if you want).
   """
-  
   # Put any code here...
-  # Example of use:
+  correct_arr = []
   for i in range(len(guesses)):
       prediction = guesses[i]
       truth = testLabels[i]
-      if (prediction != truth):
-          print "==================================="
-          print "Mistake on example %d" % i 
-          print "Predicted %d; truth is %d" % (prediction, truth)
-          print "Image: "
-          print rawTestData[i]
-          break
+      if prediction == truth:
+        correct_arr.append(1)
+      else:
+        correct_arr.append(0)
+  avg = mean(correct_arr)
+  stdev = std(correct_arr)
+
+  print "Mean: %.5f" % avg
+  print "Standard Deviation: %.5f" % stdev
+  print "Time per data point: %.5f" % time_per_data
+
+  # Example of use:
+  # for i in range(len(guesses)):
+  #     prediction = guesses[i]
+  #     truth = testLabels[i]
+  #     if (prediction != truth):
+  #         print "==================================="
+  #         print "Mistake on example %d" % i 
+  #         print "Predicted %d; truth is %d" % (prediction, truth)
+  #         print "Image: "
+  #         print rawTestData[i]
+  #         break
 
 
 ## =====================
@@ -396,19 +411,10 @@ def runClassifier(args, options):
   
   print "Testing..."
   guesses = classifier.classify(testData)
-  correct = 0 
-  correct_arr = []
-  for i in range(len(testLabels)):
-    if guesses[i] == testLabels[i]:
-      correct_arr.append(1)
-      correct += 1
-    else:
-      correct_arr.append(0)
-  avg = mean(correct_arr)
-  stdev = std(correct_arr)
+  correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
   
   print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-  analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
+  analysis(classifier, guesses, testLabels, testData, rawTestData, printImage, time_per_data)
   
   # do odds ratio computation if specified at command line
   if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):
@@ -427,10 +433,6 @@ def runClassifier(args, options):
       features_weights = classifier.findHighWeightFeatures(l)
       print ("=== Features with high weight for label %d ==="%l)
       printImage(features_weights)
-
-  print "Mean: %.5f" % avg
-  print "Standard Deviation: %.5f" % stdev
-  print "Time per data point: %.5f" % time_per_data
 
 if __name__ == '__main__':
   # Read input
