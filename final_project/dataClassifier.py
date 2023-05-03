@@ -18,6 +18,7 @@ import sys
 import util
 import time
 import random
+import knn
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -26,7 +27,7 @@ FACE_DATUM_WIDTH=60
 FACE_DATUM_HEIGHT=70
 
 TEST = True # enable testing for stats
-PRINT = False 
+PRINT = True 
 
 def basicFeatureExtractorDigit(datum):
   """
@@ -224,7 +225,7 @@ def readCommand( argv ):
   from optparse import OptionParser  
   parser = OptionParser(USAGE_STRING)
   
-  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='mostFrequent')
+  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest', 'knn'], default='mostFrequent')
   parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
   parser.add_option('-t', '--training', help=default('The size of the training set'), default=100, type="int")
   parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False, action="store_true")
@@ -264,7 +265,7 @@ def readCommand( argv ):
     if (options.features):
       featureFunction = enhancedFeatureExtractorFace
     else:
-      featureFunction = basicFeatureExtractorFace      
+      featureFunction = basicFeatureExtractorFace   
   else:
     print("Unknown dataset", options.data)
     print(USAGE_STRING)
@@ -313,6 +314,8 @@ def readCommand( argv ):
   elif(options.classifier == 'minicontest'):
     import minicontest
     classifier = minicontest.contestClassifier(legalLabels)
+  elif(options.classifier == "knn"):
+    classifier = knn.KNN()
   else:
     print("Unknown classifier:", options.classifier)
     print(USAGE_STRING)
