@@ -69,7 +69,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     for datum, label in zip(trainingData, trainingLabels):
       for feature in self.features:
         self.featureLabelCount[feature, datum[feature], label] += 1
-        self.labelCount[label] += 1
+      self.labelCount[label] += 1
 
     #Validation  
     if not self.automaticTuning:
