@@ -28,7 +28,7 @@ class PerceptronClassifier:
 
   def setWeights(self, weights):
     assert len(weights) == len(self.legalLabels);
-    self.weights == weights;
+    self.weights == weights
       
   def train( self, trainingData, trainingLabels, validationData, validationLabels ):
     """
@@ -49,7 +49,7 @@ class PerceptronClassifier:
     
     for iteration in range(self.max_iterations):
       if PRINT:
-        print "Starting iteration ", iteration, "..."
+        print("Starting iteration ", iteration, "...")
       
       for i in range(len(trainingData)):
           "*** YOUR CODE HERE ***"

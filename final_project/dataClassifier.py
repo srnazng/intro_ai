@@ -166,9 +166,9 @@ def analysis(classifier, accuracy_list, testLabels, testData, rawTestData, print
   avg = mean(accuracy_list)
   stdev = std(accuracy_list)
 
-  print "Mean: %.5f" % avg
-  print "Standard Deviation: %.5f" % stdev
-  print "Time per data point: %.5f" % time_per_data
+  print("Mean: %.5f" % avg)
+  print("Standard Deviation: %.5f" % stdev)
+  print("Time per data point: %.5f" % time_per_data)
 
   # Example of use:
   # for i in range(len(guesses)):
@@ -212,9 +212,9 @@ class ImagePrinter:
             x,y = pix
             image.pixels[x][y] = 2
         except:
-            print "new features:", pix
+            print("new features:", pix)
             continue
-      print image  
+      print(image)
 
 def default(str):
   return str + ' [Default: %default]'
@@ -242,15 +242,15 @@ def readCommand( argv ):
   args = {}
   
   # Set up variables according to the command line input.
-  print "Doing classification"
-  print "--------------------"
-  print "data:\t\t" + options.data
-  print "classifier:\t\t" + options.classifier
+  print("Doing classification")
+  print("--------------------")
+  print("data:\t\t" + options.data)
+  print("classifier:\t\t" + options.classifier)
   if not options.classifier == 'minicontest':
-    print "using enhanced features?:\t" + str(options.features)
+    print("using enhanced features?:\t" + str(options.features))
   else:
-    print "using minicontest feature extractor"
-  print "training set size:\t" + str(options.training)
+    print("using minicontest feature extractor")
+  print("training set size:\t" + str(options.training))
   if(options.data=="digits"):
     printImage = ImagePrinter(DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT).printImage
     if (options.features):
@@ -266,8 +266,8 @@ def readCommand( argv ):
     else:
       featureFunction = basicFeatureExtractorFace      
   else:
-    print "Unknown dataset", options.data
-    print USAGE_STRING
+    print("Unknown dataset", options.data)
+    print(USAGE_STRING)
     sys.exit(2)
     
   if(options.data=="digits"):
@@ -276,19 +276,19 @@ def readCommand( argv ):
     legalLabels = range(2)
     
   if options.training <= 0:
-    print "Training set size should be a positive integer (you provided: %d)" % options.training
-    print USAGE_STRING
+    print("Training set size should be a positive integer (you provided: %d)" % options.training)
+    print(USAGE_STRING)
     sys.exit(2)
     
   if options.smoothing <= 0:
-    print "Please provide a positive number for smoothing (you provided: %f)" % options.smoothing
-    print USAGE_STRING
+    print("Please provide a positive number for smoothing (you provided: %f)" % options.smoothing)
+    print(USAGE_STRING)
     sys.exit(2)
     
   if options.odds:
     if options.label1 not in legalLabels or options.label2 not in legalLabels:
-      print "Didn't provide a legal labels for the odds ratio: (%d,%d)" % (options.label1, options.label2)
-      print USAGE_STRING
+      print("Didn't provide a legal labels for the odds ratio: (%d,%d)" % (options.label1, options.label2))
+      print(USAGE_STRING)
       sys.exit(2)
 
   if(options.classifier == "mostFrequent"):
@@ -297,25 +297,25 @@ def readCommand( argv ):
     classifier = naiveBayes.NaiveBayesClassifier(legalLabels)
     classifier.setSmoothing(options.smoothing)
     if (options.autotune):
-        print "using automatic tuning for naivebayes"
+        print("using automatic tuning for naivebayes")
         classifier.automaticTuning = True
     else:
-        print "using smoothing parameter k=%f for naivebayes" %  options.smoothing
+        print("using smoothing parameter k=%f for naivebayes" %  options.smoothing)
   elif(options.classifier == "perceptron"):
     classifier = perceptron.PerceptronClassifier(legalLabels,options.iterations)
   elif(options.classifier == "mira"):
     classifier = mira.MiraClassifier(legalLabels, options.iterations)
     if (options.autotune):
-        print "using automatic tuning for MIRA"
+        print("using automatic tuning for MIRA")
         classifier.automaticTuning = True
     else:
-        print "using default C=0.001 for MIRA"
+        print("using default C=0.001 for MIRA")
   elif(options.classifier == 'minicontest'):
     import minicontest
     classifier = minicontest.contestClassifier(legalLabels)
   else:
-    print "Unknown classifier:", options.classifier
-    print USAGE_STRING
+    print("Unknown classifier:", options.classifier)
+    print(USAGE_STRING)
     
     sys.exit(2)
 
@@ -406,21 +406,20 @@ def runClassifier(args, options):
     for y in range(inner_iterations):
       # Extract features
       if PRINT:
-        print "Extracting features..."
+        print("Extracting features...")
 
       random_indices = random.sample(range(len(rawTrainingData)), options.training)
       random_train_sample = [rawTrainingData[i] for i in random_indices]
       random_train_labels = [trainingLabels[i] for i in random_indices]
 
-
-      trainingData = map(featureFunction, random_train_sample)
-      validationData = map(featureFunction, rawValidationData)
-      testData = map(featureFunction, rawTestData)
+      trainingData = list(map(featureFunction, random_train_sample))
+      validationData = list(map(featureFunction, rawValidationData))
+      testData = list(map(featureFunction, rawTestData))
       
       
       # Conduct training and testing
       if PRINT:
-        print "Training..."
+        print("Training...")
       training_start = time.time()
       classifier.train(trainingData, random_train_labels, validationData, validationLabels)
       training_end = time.time()
@@ -429,28 +428,28 @@ def runClassifier(args, options):
       time_list.append(time_per_data)
       
       if PRINT:
-        print "Validating..."
+        print("Validating...")
       guesses = classifier.classify(validationData)
       correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
       
       if PRINT:
-        print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
+        print(str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels)))
       
       if PRINT:
-        print "Testing..."
+        print("Testing...")
       guesses = classifier.classify(testData)
       correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
       accuracy = float(correct) / len(testLabels)
       
       if PRINT:
-        print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * accuracy)
+        print(str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * accuracy))
 
       accuracy_list.append(accuracy)
       
     if TEST:
-      print " "
-      print "Training data size: %d" % percent
-      print "Percent: %.2f" % p
+      print()
+      print("Training data size: %d" % percent)
+      print("Percent: %.2f" % p)
       
     analysis(classifier, accuracy_list, testLabels, testData, rawTestData, printImage, mean(time_list))
     
@@ -463,7 +462,7 @@ def runClassifier(args, options):
     else:
       string3 = "=== Features for which weight(label %d)-weight(label %d) is biggest ===" % (label1, label2)    
       
-    print string3
+    print(string3)
     printImage(features_odds)
 
   if((options.weights) & (options.classifier == "perceptron")):
