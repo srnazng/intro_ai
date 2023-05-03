@@ -27,7 +27,7 @@ FACE_DATUM_WIDTH=60
 FACE_DATUM_HEIGHT=70
 
 TEST = True # enable testing for stats
-PRINT = True 
+PRINT = False 
 
 def basicFeatureExtractorDigit(datum):
   """

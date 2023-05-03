@@ -1,0 +1,66 @@
+Doing classification
+--------------------
+data:		faces
+classifier:		knn
+using enhanced features?:	False
+training set size:	100
+
+Training data size: 45
+Percent: 0.10
+Mean: 0.62600
+Standard Deviation: 0.04271
+Time per data point: 0.01164
+
+Training data size: 90
+Percent: 0.20
+Mean: 0.65600
+Standard Deviation: 0.03382
+Time per data point: 0.00750
+
+Training data size: 135
+Percent: 0.30
+Mean: 0.68000
+Standard Deviation: 0.10354
+Time per data point: 0.00609
+
+Training data size: 180
+Percent: 0.40
+Mean: 0.66000
+Standard Deviation: 0.08922
+Time per data point: 0.00546
+
+Training data size: 225
+Percent: 0.50
+Mean: 0.63600
+Standard Deviation: 0.06530
+Time per data point: 0.00503
+
+Training data size: 270
+Percent: 0.60
+Mean: 0.58000
+Standard Deviation: 0.06132
+Time per data point: 0.00483
+
+Training data size: 315
+Percent: 0.70
+Mean: 0.71600
+Standard Deviation: 0.05783
+Time per data point: 0.00507
+
+Training data size: 360
+Percent: 0.80
+Mean: 0.54000
+Standard Deviation: 0.02000
+Time per data point: 0.00466
+
+Training data size: 405
+Percent: 0.90
+Mean: 0.55600
+Standard Deviation: 0.05200
+Time per data point: 0.00457
+
+Training data size: 451
+Percent: 1.00
+Mean: 0.53000
+Standard Deviation: 0.00000
+Time per data point: 0.00426

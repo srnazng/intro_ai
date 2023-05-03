@@ -1,0 +1,66 @@
+Doing classification
+--------------------
+data:		digits
+classifier:		knn
+using enhanced features?:	False
+training set size:	100
+
+Training data size: 500
+Percent: 0.10
+Mean: 0.81600
+Standard Deviation: 0.02154
+Time per data point: 0.00085
+
+Training data size: 1000
+Percent: 0.20
+Mean: 0.84800
+Standard Deviation: 0.02135
+Time per data point: 0.00079
+
+Training data size: 1500
+Percent: 0.30
+Mean: 0.89800
+Standard Deviation: 0.01470
+Time per data point: 0.00078
+
+Training data size: 2000
+Percent: 0.40
+Mean: 0.89200
+Standard Deviation: 0.01939
+Time per data point: 0.00072
+
+Training data size: 2500
+Percent: 0.50
+Mean: 0.90600
+Standard Deviation: 0.00800
+Time per data point: 0.00070
+
+Training data size: 3000
+Percent: 0.60
+Mean: 0.91600
+Standard Deviation: 0.00800
+Time per data point: 0.00067
+
+Training data size: 3500
+Percent: 0.70
+Mean: 0.90800
+Standard Deviation: 0.01720
+Time per data point: 0.00066
+
+Training data size: 4000
+Percent: 0.80
+Mean: 0.91200
+Standard Deviation: 0.01166
+Time per data point: 0.00066
+
+Training data size: 4500
+Percent: 0.90
+Mean: 0.92600
+Standard Deviation: 0.00800
+Time per data point: 0.00068
+
+Training data size: 5000
+Percent: 1.00
+Mean: 0.93200
+Standard Deviation: 0.00748
+Time per data point: 0.00071
