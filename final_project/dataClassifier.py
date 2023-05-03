@@ -16,6 +16,7 @@ import mira
 import samples
 import sys
 import util
+import time
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -71,6 +72,30 @@ def enhancedFeatureExtractorDigit(datum):
 
   "*** YOUR CODE HERE ***"
   
+  DIVISIONS = 10
+
+  grid = [[0]*DIVISIONS]*DIVISIONS
+  keys = features.keys()
+  
+  for coord in keys:
+    x = 0
+    y = 0
+    for i in range(DIVISIONS):
+      if coord[0] >= DIGIT_DATUM_WIDTH/DIVISIONS*i and coord[0] < DIGIT_DATUM_WIDTH/DIVISIONS*(i+1):
+        x = i
+        break
+    for i in range(DIVISIONS):
+      if coord[1] >= DIGIT_DATUM_WIDTH/DIVISIONS*i and coord[1] < DIGIT_DATUM_WIDTH/DIVISIONS*(i+1):
+        y = i
+        break
+    
+    if features[coord]:
+      grid[x][y] = 1
+
+  for r in range(DIVISIONS):
+    for c in range(DIVISIONS):
+      features["grid " + str((r,c))] = grid[x][y]
+
   return features
 
 
@@ -87,6 +112,31 @@ def enhancedFeatureExtractorFace(datum):
   It is your choice to modify this.
   """
   features =  basicFeatureExtractorFace(datum)
+
+  DIVISIONS = 10
+
+  grid = [[0]*DIVISIONS]*DIVISIONS
+  keys = features.keys()
+  
+  for coord in keys:
+    x = 0
+    y = 0
+    for i in range(DIVISIONS):
+      if coord[0] >= FACE_DATUM_WIDTH/DIVISIONS*i and coord[0] < FACE_DATUM_WIDTH/DIVISIONS*(i+1):
+        x = i
+        break
+    for i in range(DIVISIONS):
+      if coord[1] >= FACE_DATUM_WIDTH/DIVISIONS*i and coord[1] < FACE_DATUM_WIDTH/DIVISIONS*(i+1):
+        y = i
+        break
+    
+    if features[coord]:
+      grid[x][y] = 1
+
+  for r in range(DIVISIONS):
+    for c in range(DIVISIONS):
+      features["grid " + str((r,c))] = grid[x][y]
+
   return features
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
@@ -280,6 +330,24 @@ USAGE_STRING = """
                   with label1=3 vs. label2=6
                  """
 
+def to_int(li):
+  l = []
+  for i in li:
+    if i:
+      l.append(1)
+    else:
+      l.append(0)
+  return l
+
+def mean(li):
+  return float(sum(li))/float(len(li))
+
+def std(li):
+  avg = mean(li)
+  variance = sum([((x - avg) ** 2) for x in li]) / len(li)
+  res = variance ** 0.5
+  return res
+
 # Main harness code
 
 def runClassifier(args, options):
@@ -316,14 +384,29 @@ def runClassifier(args, options):
   
   # Conduct training and testing
   print "Training..."
+  training_start = time.time()
   classifier.train(trainingData, trainingLabels, validationData, validationLabels)
+  training_end = time.time()
+  time_per_data = (training_end - training_start) / options.training
+  
   print "Validating..."
   guesses = classifier.classify(validationData)
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
   print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
+  
   print "Testing..."
   guesses = classifier.classify(testData)
-  correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
+  correct = 0 
+  correct_arr = []
+  for i in range(len(testLabels)):
+    if guesses[i] == testLabels[i]:
+      correct_arr.append(1)
+      correct += 1
+    else:
+      correct_arr.append(0)
+  avg = mean(correct_arr)
+  stdev = std(correct_arr)
+  
   print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
   analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
   
@@ -344,6 +427,10 @@ def runClassifier(args, options):
       features_weights = classifier.findHighWeightFeatures(l)
       print ("=== Features with high weight for label %d ==="%l)
       printImage(features_weights)
+
+  print "Mean: %.5f" % avg
+  print "Standard Deviation: %.5f" % stdev
+  print "Time per data point: %.5f" % time_per_data
 
 if __name__ == '__main__':
   # Read input
