@@ -143,7 +143,7 @@ def enhancedFeatureExtractorFace(datum):
 
   return features
 
-def analysis(classifier, accuracy_list, testLabels, testData, rawTestData, printImage, time_per_data):
+def analysis(classifier, guesses, accuracy_list, testLabels, rawTestData, time_per_data):
   """
   This function is called after learning.
   Include any code that you want here to help you analyze your results.
@@ -171,17 +171,17 @@ def analysis(classifier, accuracy_list, testLabels, testData, rawTestData, print
   print("Standard Deviation: %.5f" % stdev)
   print("Time per data point: %.5f" % time_per_data)
 
-  # Example of use:
-  # for i in range(len(guesses)):
-  #     prediction = guesses[i]
-  #     truth = testLabels[i]
-  #     if (prediction != truth):
-  #         print "==================================="
-  #         print "Mistake on example %d" % i 
-  #         print "Predicted %d; truth is %d" % (prediction, truth)
-  #         print "Image: "
-  #         print rawTestData[i]
-  #         break
+  if not TEST:
+    for i in range(len(guesses)):
+        prediction = guesses[i]
+        truth = testLabels[i]
+        if (prediction != truth):
+            print("===================================")
+            print("Mistake on example %d" % i)
+            print("Predicted %d; truth is %d" % (prediction, truth))
+            print("Image: ")
+            print(rawTestData[i])
+            break
 
 
 ## =====================
@@ -454,7 +454,7 @@ def runClassifier(args, options):
       print("Training data size: %d" % percent)
       print("Percent: %.2f" % p)
       
-    analysis(classifier, accuracy_list, testLabels, testData, rawTestData, printImage, mean(time_list))
+    analysis(classifier, guesses, accuracy_list, testLabels, rawTestData,  mean(time_list))
     
   # do odds ratio computation if specified at command line
   if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):
